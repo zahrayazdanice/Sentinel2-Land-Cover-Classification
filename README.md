@@ -2,15 +2,15 @@
 
 Scene-level land-use / land-cover classification of **Sentinel-2** satellite patches with all **13 spectral bands** (EuroSAT: 27,000 patches of 64 × 64 px at 10 m, 10 classes). The project compares a classical **statistical pattern recognition** pipeline (spectral statistics, spectral indices and Haralick texture with a Gaussian maximum-likelihood classifier, a random forest and an SVM) with **CNNs adapted to multispectral input**. All models are evaluated with confidence intervals and significance tests, and the project measures how much the usual random train/test split overestimates accuracy compared with a **geographically disjoint** test region.
 
+<p align="center"><img src="figures/samples.png" width="70%"></p>
+<p align="center"><sub>EuroSAT: eight random Sentinel-2 patches per class (true color, 64 × 64 px = 640 m × 640 m on the ground).</sub></p>
+
 <p align="center">
   <b>98.70% test accuracy on EuroSAT (5,400 test images)</b> with an ImageNet ResNet-18 inflated to 13 bands<br>
   best hand-crafted pipeline: 95.31% · same network on RGB only: 97.74%<br>
   on a test region ~1,000 km from the training data: 96.24% with 13 bands vs. 91.65% with RGB<br>
   the whole notebook runs in 26 minutes on a laptop RTX 3050 (6 GB)
 </p>
-
-<p align="center"><img src="figures/spatial_split.png" width="90%"></p>
-<p align="center"><sub>Left: the standard random split, where test patches (green) sit right next to training patches (median distance 1.2 km). Right: the spatial split, where the test region lies east of 17.4° E (median distance to the nearest training patch 1,041 km).</sub></p>
 
 **Notebook:** [`sentinel2_land_cover_classification.ipynb`](sentinel2_land_cover_classification.ipynb) runs top to bottom, and all outputs are included.
 
@@ -25,6 +25,14 @@ Scene-level land-use / land-cover classification of **Sentinel-2** satellite pat
 - **Interpretation.** Band permutation importance (overall and per class), Grad-CAM, t-SNE of hand-crafted vs. learned features, and error analysis.
 - **Content-based image retrieval.** Precision@10 is 98.6% with the learned features vs. 87.1% with the hand-crafted ones.
 - **Spatial generalization.** Random vs. spatially disjoint (west → east) evaluation.
+
+## Data
+
+<p align="center"><img src="figures/bands.png" width="100%"></p>
+<p align="center"><sub>One River patch in all 13 bands, sorted by wavelength: the 60 m bands (B01, B09, B10) are much coarser, and in the near and shortwave infrared the water is black while the land is bright.</sub></p>
+
+<p align="center"><img src="figures/composites.png" width="60%"></p>
+<p align="center"><sub>True-color, color-infrared and shortwave-infrared composites with NDVI and NDWI: vegetation is bright in the near infrared (red in color infrared), water is black.</sub></p>
 
 ## Results
 
@@ -44,6 +52,17 @@ McNemar's test (Holm-corrected) on the random split: 13 bands vs. RGB, ImageNet 
 
 <p align="center"><img src="figures/test_accuracy.png" width="70%"></p>
 
+## Example outputs
+
+<p align="center"><img src="figures/gradcam.png" width="100%"></p>
+<p align="center"><sub>Grad-CAM of the 13-band ResNet-18 on two random test images per class (all classified correctly): the maps often follow roads, riverbanks and buildings.</sub></p>
+
+<p align="center"><img src="figures/retrieval_examples.png" width="100%"></p>
+<p align="center"><sub>Image retrieval with the CNN features: a test query (left) and its eight most similar training images, all from the query's class.</sub></p>
+
+<p align="center"><img src="figures/errors.png" width="100%"></p>
+<p align="center"><sub>The 16 most confident errors of the 13-band ResNet-18: mostly overlapping crop and vegetation classes, or patches that contain two classes.</sub></p>
+
 ## Findings
 
 **1. The extra bands fix a physical confusion.** The most frequent error of the RGB network is dense forest predicted as water (29 of its 122 errors). Both are dark in the visible range, but in the near infrared forest is bright and water is black. With all 13 bands the errors drop from 122 to 70 (−43%), and this confusion disappears.
@@ -53,6 +72,9 @@ McNemar's test (Holm-corrected) on the random split: 13 bands vs. RGB, ImageNet 
 **2. Hand-crafted features are good but blind to structure.** The SVM reaches 95.31%, but recognizes only 81.5% of the Highway patches (CNN: 99.2%): a thin road covers a small part of the patch, so global statistics and direction-averaged texture cannot capture it.
 
 **3. The random split hides how much models differ.** On the random split the median test patch has a training patch 1.2 km away. On the geographically disjoint test region, OA drops by 2.5 points for the 13-band CNN, 6.1 for the RGB CNN and 7.6 for the random forest. The benefit of the extra bands grows from 43% to 55% fewer errors: the forest-as-water confusion of the RGB model grows from 29 to 112 errors.
+
+<p align="center"><img src="figures/spatial_split.png" width="90%"></p>
+<p align="center"><sub>Left: the standard random split, where test patches (green) sit right next to training patches (median distance 1.2 km). Right: the spatial split, where the test region lies east of 17.4° E (median distance to the nearest training patch 1,041 km).</sub></p>
 
 <p align="center"><img src="figures/spatial_results.png" width="95%"></p>
 
