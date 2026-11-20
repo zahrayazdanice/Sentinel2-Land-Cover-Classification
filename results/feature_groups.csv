@@ -1,0 +1,6 @@
+features,dimension,val OA (%)
+RGB bands only (B02-B04),6,75.90740740740742
+all 13 bands,26,88.53703703703704
+all 13 bands + spectral indices,32,90.4074074074074
+GLCM texture only,10,71.98148148148148
+all 42 features,42,92.48148148148148

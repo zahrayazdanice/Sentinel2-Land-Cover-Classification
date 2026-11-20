@@ -1,0 +1,7 @@
+question,A,B,only A correct,only B correct,p,p (Holm),significant at 5 %
+13 bands vs. RGB,R18-MS,R18-RGB,95,43,1.1299603475746249e-05,4.5198413902984996e-05,yes
+ImageNet vs. random initialization,R18-MS,R18-MS-scratch,72,29,2.2369582656172593e-05,6.710874796851778e-05,yes
+augmentation vs. none,R18-MS,R18-MS-noaug,40,33,0.48278855684402133,0.66461181640625,no
+ResNet-18 vs. compact CNN,R18-MS,CNN-MS,174,24,2.864461042917996e-29,1.432230521458998e-28,yes
+CNN vs. best hand-crafted pipeline,R18-MS,RBF-SVM,211,28,6.488319413204007e-36,3.892991647922404e-35,yes
+test-time augmentation vs. none,R18-MS + TTA,R18-MS,11,6,0.332305908203125,0.66461181640625,no
